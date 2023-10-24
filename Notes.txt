@@ -1,0 +1,2 @@
+Product model to understand the module as it has comments.
+name: decodeURIComponent(req.params.category),
