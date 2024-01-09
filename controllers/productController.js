@@ -254,7 +254,7 @@ const adminUpload = async (req, res, next) => {
     const { v4: uuidv4 } = require("uuid");
     const uploadDirectory = path.resolve(
       __dirname,
-      "../../Client/public/images/products"
+      "../../E-Commerce-Client/public/images/products"
     );
     let product = await Product.findById(req.query.productId).orFail();
     let imagesTable = [];
@@ -280,9 +280,10 @@ const adminUpload = async (req, res, next) => {
 };
 const adminDeleteProductsImage = async (req, res, next) => {
   const imagePath = decodeURIComponent(req.params.imagePath);
+  console.log("🚀 ~ imagePath:", imagePath)
   try {
     const path = require("path");
-    const finalPath = path.resolve("../Client/public") + imagePath;
+    const finalPath = path.resolve("../../E-Commerce-Client/public/images/products") + imagePath;
     const fs = require("fs");
     fs.unlink(finalPath, (err) => {
       if (err) {

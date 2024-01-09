@@ -12,15 +12,19 @@ const orderSchema = mongoose.Schema(
       itemCount: { type: Number },
       cartSubTotal: { type: Number },
     },
-    cartItem: [
+    cartItems: [
       {
         name: { type: String, required: true },
         price: { type: Number, required: true },
         image: { path: { type: String, required: true } },
         quantity: { type: Number, required: true },
-        count: { type: Number, required: true },
+        count: { type: Number, required: true }, /// Total No of products in the data base
       },
     ],
+    paymentMethod:{
+      type:String,
+      require:true
+    },
     transactionResult: {
       status: { type: String },
       createTime: { type: String },

@@ -1,2 +1,24 @@
 Product model to understand the module as it has comments.
 name: decodeURIComponent(req.params.category),
+
+const getUser = async (req, res, next) => {
+  try {
+    return res.send("Working");
+  } catch (error) {
+    const err = new HttpError("Unable to get user profile", 500);
+    return next(error || err);
+  }
+};
+ const  {
+  _id,
+  name,
+  lastName,
+  email,
+  isAdmin,
+  iat,
+  exp
+} = req.user
+
+    "serve-pod": "node serve.js",
+    "serve-dev" : " npx nodemon serve.js",
+    "client" : "npm start - prefix ../E-Commerce-Client",

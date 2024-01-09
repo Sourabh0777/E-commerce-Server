@@ -162,21 +162,22 @@ const getUserProfile = async (req, res, next) => {
   }
 };
 const writeReview = async (req, res, next) => {
+  const session = await Review.startSession();
+
   try {
-    const session = await Review.startSession();
     // get comment, rating from request.body:
     const { comment, rating } = req.body;
     // validate request:
     if (!(comment && rating)) {
       return res.status(400).send("All inputs are required");
     }
+
     // create review id manually because it is needed also for saving in Product collection
+    const ObjectId = require("mongodb").ObjectId;
     let reviewId = new ObjectId();
-    console.log(
-      "🚀 ~ file: userController.js:174 ~ writeReview ~ reviewId:",
-      reviewId
-    );
+
     session.startTransaction();
+
     await Review.create(
       [
         {
@@ -195,16 +196,16 @@ const writeReview = async (req, res, next) => {
     const product = await Product.findById(req.params.productId)
       .populate("reviews")
       .session(session);
-    //One time comment from a user
+
     const alreadyReviewed = product.reviews.find(
-      (r) => r.user._id.toString() == req.user._id.toString()
+      (r) => r.user._id.toString() === req.user._id.toString()
     );
     if (alreadyReviewed) {
-      session.abortTransaction();
+      await session.abortTransaction();
       session.endSession();
-      return res.status(400).send("You have already commented");
+      return res.status(400).send("product already reviewed");
     }
-    //
+
     let prc = [...product.reviews];
     prc.push({ rating: rating });
     product.reviews.push(reviewId);
@@ -219,12 +220,57 @@ const writeReview = async (req, res, next) => {
           .reduce((sum, item) => sum + item, 0) / product.reviews.length;
     }
     await product.save();
+
     await session.commitTransaction();
     session.endSession();
-    res.send("review created");
+    return res.send("review created");
   } catch (err) {
     await session.abortTransaction();
     next(err);
+  } finally {
+    session.endSession();
+  }
+};
+const getUser = async (req, res, next) => {
+  try {
+    const userId = req.params.id;
+    const user = await User.findById(userId)
+      .select("name lastName email isAdmin")
+      .orFail();
+    return res.json(user);
+  } catch (error) {
+    const err = new HttpError("Unable to get user details", 500);
+    return next(err);
+  }
+};
+
+const updateUser = async (req, res, next) => {
+  try {
+    const { name, lastName, email, isAdmin } = req.body;
+    const userId = req.params.id;
+    const user = await User.findById(userId).orFail();
+    user.name = name || user.name;
+    user.lastName = lastName || user.name;
+    user.email = email || user.email;
+    user.isAdmin = isAdmin || user.isAdmin;
+    await user.save();
+    return res.send("User updated");
+  } catch (error) {
+    const err = new HttpError("Unable to update user", 500);
+    return next(error || err);
+  }
+};
+const deleteUser = async (req, res, next) => {
+  try {
+    const userId = req.params.id;
+    console.log("🚀 ~ file: userController.js:266 ~ deleteUser ~ userId:", userId)
+    const user = await User.findById(userId).orFail();
+    const result = await user.deleteOne();
+
+    return res.json({ message: "User Was deleted" });
+  } catch (error) {
+    const err = new HttpError("Unable to get user profile", 500);
+    return next(error || err);
   }
 };
 module.exports = {
@@ -234,4 +280,7 @@ module.exports = {
   updateUserProfile,
   getUserProfile,
   writeReview,
+  getUser,
+  updateUser,
+  deleteUser,
 };
