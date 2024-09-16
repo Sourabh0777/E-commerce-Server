@@ -1,8 +1,6 @@
 const HttpError = require("../models/http-error");
 const jwt = require("jsonwebtoken");
 const verifyIsLoggedIn = async (req, res, next) => {
-  next();
-  return;
   try {
     const token = req.cookies.access_token;
     if (!token) {
@@ -21,9 +19,6 @@ const verifyIsLoggedIn = async (req, res, next) => {
   }
 };
 const verifyIsAdmin = async (req, res, next) => {
-  next();
-  return;
-
   if (req.user && req.user.isAdmin) {
     next();
   } else {

@@ -263,7 +263,10 @@ const updateUser = async (req, res, next) => {
 const deleteUser = async (req, res, next) => {
   try {
     const userId = req.params.id;
-    console.log("🚀 ~ file: userController.js:266 ~ deleteUser ~ userId:", userId)
+    console.log(
+      "🚀 ~ file: userController.js:266 ~ deleteUser ~ userId:",
+      userId
+    );
     const user = await User.findById(userId).orFail();
     const result = await user.deleteOne();
 

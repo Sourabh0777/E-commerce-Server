@@ -1,4 +1,4 @@
-const connectDB = require("../config/DB");
+const connectDB = require("../config/DB.js");
 connectDB();
 
 const categoryData = require("./Categories");
@@ -11,9 +11,11 @@ const reviewData = require("./reviews");
 const User = require("../models/UserModel");
 const userData = require("./users");
 
-const Order = require("../models/OrderModel")
-const orderData = require("./orders")
+const Order = require("../models/OrderModel");
+const orderData = require("./orders");
 const importData = async () => {
+  console.log("🚀 ~ importData ~ start:");
+
   try {
     await Category.collection.dropIndexes();
     await Product.collection.dropIndexes();
@@ -21,9 +23,9 @@ const importData = async () => {
     await Category.collection.deleteMany({});
     await Product.collection.deleteMany({});
     await Review.collection.deleteMany({});
-    await User.collection.deleteMany({})
-    await Order.collection.deleteMany({})
-    
+    await User.collection.deleteMany({});
+    await Order.collection.deleteMany({});
+
     await Category.insertMany(categoryData);
     const reviews = await Review.insertMany(reviewData);
     const sampleProducts = productData.map((product) => {
@@ -34,8 +36,7 @@ const importData = async () => {
     });
     await Product.insertMany(sampleProducts);
     await User.insertMany(userData);
-    await Order.insertMany(orderData)
-    console.log("Seeder data proceeded successfully");
+    await Order.insertMany(orderData);
     process.exit();
   } catch (error) {
     console.error("Error while proccessing seeder data", error);
