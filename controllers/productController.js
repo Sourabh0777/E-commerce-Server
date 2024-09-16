@@ -167,7 +167,6 @@ const getBestSellers = async (req, res, next) => {
 const adminGetProducts = async (req, res, next) => {
   try {
     const user = req.user;
-    console.log("🚀 ~ file: productController.js:170 ~ adminGetProducts ~ user:", user)
     const products = await Product.find({})
       .sort({ category: 1 })
       .select("name price category")
@@ -280,10 +279,11 @@ const adminUpload = async (req, res, next) => {
 };
 const adminDeleteProductsImage = async (req, res, next) => {
   const imagePath = decodeURIComponent(req.params.imagePath);
-  console.log("🚀 ~ imagePath:", imagePath)
   try {
     const path = require("path");
-    const finalPath = path.resolve("../../E-Commerce-Client/public/images/products") + imagePath;
+    const finalPath =
+      path.resolve("../../E-Commerce-Client/public/images/products") +
+      imagePath;
     const fs = require("fs");
     fs.unlink(finalPath, (err) => {
       if (err) {
