@@ -4,7 +4,7 @@
   "description": "BFF Sho",
   "main": "server.js",
   "scripts": {
-    "seed":"node ./Seeder/Seeder.js",
+    "seed": "node ./Seeder/Seeder.js",
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "nodemon server.js",
     "serve-dev": "nodemon server.js",
@@ -24,6 +24,7 @@
   "dependencies": {
     "concurrently": "^7.0.0",
     "cookie-parser": "^1.4.6",
+    "cors": "^2.8.5",
     "express-fileupload": "^1.4.1",
     "jsonwebtoken": "^9.0.2",
     "mongodb": "^5.7.0",

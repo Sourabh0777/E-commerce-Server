@@ -14,10 +14,12 @@ const {
   writeReview,
   getUser,
   updateUser,
-  deleteUser
+  deleteUser,
+  logoutUser
 } = require("../controllers/userController");
 router.post("/register", registerUser);
 router.post("/login", loginUser);
+router.get("/logout", logoutUser);
 
 // Login Routes
 router.use(verifyIsLoggedIn);

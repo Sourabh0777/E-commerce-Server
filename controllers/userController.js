@@ -16,7 +16,7 @@ const getUsers = async (req, res, next) => {
 };
 const registerUser = async (req, res, next) => {
   try {
-    const { name, lastName, email, password } = req.body;
+    const { name, lastName, email, password } = await req.body;
     if (!(name && lastName && email && password)) {
       const error = new HttpError("All inputs are required", 400);
       return next(error);
@@ -66,7 +66,7 @@ const registerUser = async (req, res, next) => {
     }
   } catch (err) {
     const error = new HttpError("No user Created", 400);
-    return next(error);
+    return next(err ? err : error);
   }
 };
 const loginUser = async (req, res, next) => {
@@ -125,7 +125,6 @@ const updateUserProfile = async (req, res, next) => {
     const user = await User.findById(req.user._id).orFail();
     user.name = req.body.name || user.name;
     user.lastName = req.body.lastName || user.lastName;
-    user.email = req.body.email || user.email;
     user.phoneNumber = req.body.phoneNumber;
     user.address = req.body.address;
     user.country = req.body.country;
@@ -137,7 +136,7 @@ const updateUserProfile = async (req, res, next) => {
     }
     await user.save();
     res.json({
-      success: "user updated",
+      success: "User updated.",
       userUpdated: {
         _id: user._id,
         name: user.name,
@@ -151,7 +150,7 @@ const updateUserProfile = async (req, res, next) => {
     return next(error || err);
   }
 };
-const getUserProfile = async (req, res, next) => {
+const getUserProfile = async (req, res, next) => {  
   try {
     const userId = req.params.id;
     const user = await User.findById(userId).orFail();
@@ -276,6 +275,26 @@ const deleteUser = async (req, res, next) => {
     return next(error || err);
   }
 };
+const logoutUser = async (req, res) => {
+  console.log("logout Api");
+
+  let cookieParams = {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    expires: new Date(0), 
+    sameSite: "strict",
+    path: '/'
+  };
+  console.log("🚀 ~ logoutUser ~ cookieParams:", cookieParams)
+
+  // Clear the cookie by setting an expiration date in the past
+  res.cookie("access_token", " ", cookieParams);
+
+  // Respond to the client
+  return res.json({
+    success: "User Logged Out",
+  });
+};
 module.exports = {
   getUsers,
   registerUser,
@@ -286,4 +305,5 @@ module.exports = {
   getUser,
   updateUser,
   deleteUser,
+  logoutUser,
 };
